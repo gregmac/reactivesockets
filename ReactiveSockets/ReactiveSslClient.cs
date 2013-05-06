@@ -13,8 +13,8 @@ namespace ReactiveSockets
     /// </summary>
     public class ReactiveSslClient : ReactiveClient
     {
-        private SslStream _stream;
-        private readonly object _getStreamLock = new object();
+        private SslStream stream;
+        private readonly object getStreamLock = new object();
         
         private readonly string targetHost;
         private readonly bool leaveInnerStreamOpen;
@@ -77,24 +77,24 @@ namespace ReactiveSockets
         /// <returns></returns>
         protected override System.IO.Stream GetStream()
         {
-            lock (_getStreamLock)
+            lock (getStreamLock)
             {
-                if (_stream == null)
+                if (stream == null)
                 {
-                    _stream = new SslStream(
+                    stream = new SslStream(
                         base.GetStream(),
                         leaveInnerStreamOpen: leaveInnerStreamOpen,
                         userCertificateValidationCallback: userCertificateValidationCallback,
                         userCertificateSelectionCallback: userCertificateSelectionCallback,
                         encryptionPolicy: encryptionPolicy);
 
-                    _stream.AuthenticateAsClient(
+                    stream.AuthenticateAsClient(
                         targetHost,
                         clientCertificates ?? new X509CertificateCollection(),
                         enabledSslProtocols,
                         checkCertificateRevocation);
                 }
-                return _stream;
+                return stream;
             }
         }
     }

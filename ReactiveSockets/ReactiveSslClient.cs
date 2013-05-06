@@ -16,14 +16,14 @@ namespace ReactiveSockets
         private SslStream _stream;
         private readonly object _getStreamLock = new object();
         
-        private readonly string _targetHost;
-        private readonly bool _leaveInnerStreamOpen;
-        private readonly RemoteCertificateValidationCallback _userCertificateValidationCallback;
-        private readonly LocalCertificateSelectionCallback _userCertificateSelectionCallback;
-        private readonly EncryptionPolicy _encryptionPolicy;
-        private readonly X509CertificateCollection _clientCertificates;
-        private readonly SslProtocols _enabledSslProtocols;
-        private readonly bool _checkCertificateRevocation;
+        private readonly string targetHost;
+        private readonly bool leaveInnerStreamOpen;
+        private readonly RemoteCertificateValidationCallback userCertificateValidationCallback;
+        private readonly LocalCertificateSelectionCallback userCertificateSelectionCallback;
+        private readonly EncryptionPolicy encryptionPolicy;
+        private readonly X509CertificateCollection clientCertificates;
+        private readonly SslProtocols enabledSslProtocols;
+        private readonly bool checkCertificateRevocation;
         
         
         /// <summary>
@@ -60,14 +60,14 @@ namespace ReactiveSockets
             bool checkCertificateRevocation = false) 
             : base(hostname, port)
         {
-            _targetHost = targetHost;
-            _leaveInnerStreamOpen = leaveInnerStreamOpen;
-            _userCertificateValidationCallback = userCertificateValidationCallback;
-            _userCertificateSelectionCallback = userCertificateSelectionCallback;
-            _encryptionPolicy = encryptionPolicy;
-            _clientCertificates = clientCertificates;
-            _enabledSslProtocols = enabledSslProtocols;
-            _checkCertificateRevocation = checkCertificateRevocation;
+            this.targetHost = targetHost;
+            this.leaveInnerStreamOpen = leaveInnerStreamOpen;
+            this.userCertificateValidationCallback = userCertificateValidationCallback;
+            this.userCertificateSelectionCallback = userCertificateSelectionCallback;
+            this.encryptionPolicy = encryptionPolicy;
+            this.clientCertificates = clientCertificates;
+            this.enabledSslProtocols = enabledSslProtocols;
+            this.checkCertificateRevocation = checkCertificateRevocation;
         }
 
         /// <summary>
@@ -83,16 +83,16 @@ namespace ReactiveSockets
                 {
                     _stream = new SslStream(
                         base.GetStream(),
-                        leaveInnerStreamOpen: _leaveInnerStreamOpen,
-                        userCertificateValidationCallback: _userCertificateValidationCallback,
-                        userCertificateSelectionCallback: _userCertificateSelectionCallback,
-                        encryptionPolicy: _encryptionPolicy);
+                        leaveInnerStreamOpen: leaveInnerStreamOpen,
+                        userCertificateValidationCallback: userCertificateValidationCallback,
+                        userCertificateSelectionCallback: userCertificateSelectionCallback,
+                        encryptionPolicy: encryptionPolicy);
 
                     _stream.AuthenticateAsClient(
-                        _targetHost,
-                        _clientCertificates ?? new X509CertificateCollection(),
-                        _enabledSslProtocols,
-                        _checkCertificateRevocation);
+                        targetHost,
+                        clientCertificates ?? new X509CertificateCollection(),
+                        enabledSslProtocols,
+                        checkCertificateRevocation);
                 }
                 return _stream;
             }
